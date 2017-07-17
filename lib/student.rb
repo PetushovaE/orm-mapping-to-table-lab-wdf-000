@@ -1,8 +1,9 @@
 class Student
+
 	attr_accessor :name, :grade 
 	attr_reader :id
 
-	def initialize(name, grade, id = nil)
+	def initialize(name, grade, id=nil)
 		@name = name
 		@grade = grade
 		@id = id
@@ -10,20 +11,22 @@ class Student
 
 	def self.create_table
 		sql =  <<-SQL 
-      	CREATE TABLE IF NOT EXISTS students (
-        id INTEGER PRIMARY KEY, 
-        name TEXT, 
-        grade TEXT
-        )
-        SQL
-
-    	DB[:conn].execute(sql)
+      		CREATE TABLE IF NOT EXISTs students (
+	        	id INTEGER PRIMARY KEY, 
+	        	name TEXT, 
+	        	grade TEXT
+	        	)
+        		SQL
+				DB[:conn].execute(sql)
+    	# the SQLite3 Ruby gem's execute method will take a values we pass in as an argument
+    	# and apply them as the values of the question marks
 	end
 
 	def self.drop_table
-		sql = "DROP TABLE IF EXISTS students"
-
-    	DB[:conn].execute(sql)
+		sql = <<-SQL
+			DROP TABLE IF EXISTs students
+			SQL
+    		DB[:conn].execute(sql)
 	end
 
 	def save
@@ -31,7 +34,6 @@ class Student
       	INSERT INTO students (name, grade)
       	VALUES(?, ?)
         SQL
-
     	DB[:conn].execute(sql, self.name, self.grade)
     	@id = DB[:conn].execute("SELECT last_insert_rowid() FROM students")[0][0]
 	end
